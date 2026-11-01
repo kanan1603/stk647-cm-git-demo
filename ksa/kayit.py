@@ -27,6 +27,11 @@ def dogrula(kayitlar):
     return hatali
 
 
+def filtrele(kayitlar, dal):
+    """CR-41: Tasarım güvence seviyesine (DAL A/B/C/D/E) göre öğeleri süzer."""
+    return [k for k in kayitlar if k.get("dal") == dal]
+
+
 def rapor(kayitlar):
     """Durum raporu: öğe sayısı ve türe göre dağılım."""
     turler = {}
