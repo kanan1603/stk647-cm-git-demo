@@ -5,9 +5,11 @@ doğrular ve durum raporu üretir. STK647 dönem projesi örnek uygulaması.
 CSV sütunları: ci_no, ad, tur, surum, dal
 """
 import csv
+import re
 import sys
 
 ALANLAR = ["ci_no", "ad", "tur", "surum", "dal"]
+SURUM_DESENI = re.compile(r"^(\d+\.\d+\.\d+|R\d+)$")  # CR-39: yazılım X.Y.Z, donanım Rn
 
 
 def oku(yol):
@@ -20,7 +22,7 @@ def dogrula(kayitlar):
     """Zorunlu alanları kontrol eder; hatalı kayıtların ci_no listesini döndürür."""
     hatali = []
     for k in kayitlar:
-        if any(not k.get(a) for a in ALANLAR):
+        if any(not k.get(a) for a in ALANLAR) or not SURUM_DESENI.match(k.get("surum", "")):
             hatali.append(k.get("ci_no", "?"))
     return hatali
 
