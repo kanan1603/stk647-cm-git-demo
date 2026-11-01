@@ -1,0 +1,26 @@
+name: ci
+on:
+  pull_request:
+  push:
+    branches: [main, "release/**"]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pytest
+      - run: python -m pytest -q
+      - name: Commit mesajı kuralı (CR/PR + REQ-SW)
+        if: github.event_name == 'pull_request'
+        run: |
+          bad=0
+          for m in $(git log --format=%H origin/${{ github.base_ref }}..${{ github.event.pull_request.head.sha }} --no-merges); do
+            msg=$(git log -1 --format=%s $m)
+            echo "$msg" | grep -Eq '^(CR|PR)-[0-9]+:.*\[REQ-SW-[0-9]+\]|^release/' || { echo "KURAL İHLALİ: $msg"; bad=1; }
+          done
+          exit $bad
