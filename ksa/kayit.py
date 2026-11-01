@@ -34,6 +34,8 @@ def filtrele(kayitlar, dal):
 
 def rapor(kayitlar):
     """Durum raporu: öğe sayısı ve türe göre dağılım."""
+    if not kayitlar:  # PR-17: boş kayıt dosyasında çökme
+        return {"toplam": 0, "turler": {}}
     turler = {}
     for k in kayitlar:
         turler[k["tur"]] = turler.get(k["tur"], 0) + 1
